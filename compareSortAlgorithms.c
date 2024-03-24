@@ -28,21 +28,138 @@ size_t Size(void* ptr)
 
 // implements heap sort
 // extraMemoryAllocated counts bytes of memory allocated
-void heapSort(int arr[], int n)
-{
-}
 
+void heapify(int pData[], int n, int i)
+{
+    int max = i; // Initialize largest as root
+    int l = 2*i + 1; // left = 2*i + 1
+    int r = 2*i + 2; // right = 2*i + 2
+
+    // If left child is larger than root
+    if (l < n && pData[l] > pData[max]){
+        max = l;
+    }
+
+    // If right child is larger than largest so far
+    if (r < n && pData[r] > pData[max]){
+        max = r;
+    }
+
+    // If largest is not root
+    if (max!= i)
+    {
+        int temp;
+        temp=pData[i];
+        pData[i]=pData[max];
+        pData[max]=temp;
+
+        // Recursively heapify the affected sub-tree
+        heapify(pData, n, max);
+    }
+}
+void heapSort(int pData[], int n)
+{
+    // Build heap (rearrange array)
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(pData, n, i);
+
+    // One by one extract an element from heap
+    for (int j=n-1; j>0; j--)
+    {
+        int temp;
+        temp=pData[0];
+        pData[0]=pData[j];
+        pData[j]=temp;
+
+        // call max heapify on the reduced heap
+        heapify(pData, j, 0);
+    }
+}
 // implement merge sort
 // extraMemoryAllocated counts bytes of extra memory allocated
+void merge(int pData[], int l, int m, int r)
+{
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 = r - m;
+    /* create temp arrays */
+    int *L = (int*) Alloc(n1*sizeof(int));
+    int *R = (int*) Alloc(n2*sizeof(int));
+    /* Copy data to temp arrays L[] and R[] */
+    for (i = 0; i < n1; i++)
+        L[i] = pData[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = pData[m + 1+ j];
+    /* Merge the temp arrays back into arr[l..r]*/
+    i = 0; // Initial index of first subarray
+    j = 0; // Initial index of second subarray
+    k = l; // Initial index of merged subarray
+    while (i < n1 && j < n2)
+    {
+        if (L[i] <= R[j])
+        {
+            pData[k] = L[i];
+            i++;
+        }
+        else
+        {
+            pData[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1)
+    {
+        pData[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2)
+    {
+        pData[k] = R[j];
+        j++;
+        k++;
+    }
+    DeAlloc(L);
+    DeAlloc(R);
+}
+
 void mergeSort(int pData[], int l, int r)
 {
-	
+    if (l < r)
+    {
+        // get the mid point
+        int m = (l+r)/2;
+        // Sort first and second halves
+        mergeSort(pData, l, m);
+        mergeSort(pData, m+1, r);
+        // printf("Testing l=%d r=%d m=%d\n", l, r, m);
+        merge(pData, l, m, r);
+    }
 }
 
 // implement insertion sort
 // extraMemoryAllocated counts bytes of memory allocated
 void insertionSort(int* pData, int n)
 {
+    int i, item, j;
+    for (i = 1; i < n; i++)
+    {
+        item = pData[i];
+        /* Move elements of arr[0..i-1], that are
+        greater than key, to one position ahead
+        of their current position */
+        for(j=i-1; j>=0; j--)
+        {
+            if(pData[j]>item)
+                pData[j+1] = pData[j];
+            else
+                break;
+        }
+        pData[j+1] = item;
+    }
 	
 }
 
@@ -50,6 +167,22 @@ void insertionSort(int* pData, int n)
 // extraMemoryAllocated counts bytes of extra memory allocated
 void bubbleSort(int* pData, int n)
 {
+    printf("\nUsing Bubble sort\n\n");
+    int i, j,temp;
+    for (i = 0; i < n-1; i++)
+    {
+        printf("Iteration# %d\n",i+1);
+        for (j = 0; j < n-i-1; j++)
+        {
+            if (pData[j] > pData[j+1])
+            {//then swap
+                temp=pData[j];
+                pData[j]=pData[j+1];
+                pData[j+1]=temp;
+            }
+            //printArray(pData, n);
+        }
+    }
 	
 }
 
@@ -57,6 +190,23 @@ void bubbleSort(int* pData, int n)
 // extraMemoryAllocated counts bytes of extra memory allocated
 void selectionSort(int* pData, int n)
 {
+    int i, j, min_idx, temp;
+    // One by one move boundary of unsorted subarray
+    for (i = 0; i < n-1; i++)
+    {
+        printf("\nIteration# %d\n",i+1);
+        // Find the minimum element in unsorted array
+        min_idx = i;
+        for (j = i+1; j < n; j++)
+        if (pData[j] < pData[min_idx]){
+            min_idx = j;
+        }
+        // Swap the found minimum element with the first element
+        temp = pData[i];
+        pData[i] = pData[min_idx];
+        pData[min_idx] = temp;
+        //printArray(pData, n);
+    }
 	
 }
 
@@ -164,7 +314,7 @@ int main(void)
 		memcpy(pDataCopy, pDataSrc, dataSz*sizeof(int));
 		extraMemoryAllocated = 0;
 		start = clock();
-		heapSort(pDataCopy, 0, dataSz - 1);
+		heapSort(pDataCopy, dataSz);
 		end = clock();
 		cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
 		printf("\truntime\t\t\t: %.1lf\n",cpu_time_used);
