@@ -9,7 +9,7 @@ void *Alloc(size_t sz)
 	extraMemoryAllocated += sz;
 	size_t* ret = malloc(sizeof(size_t) + sz);
 	*ret = sz;
-	printf("Extra memory allocated, size: %ld\n", sz);
+	//printf("Extra memory allocated, size: %ld\n", sz);
 	return &ret[1];
 }
 
@@ -17,7 +17,7 @@ void DeAlloc(void* ptr)
 {
 	size_t* pSz = (size_t*)ptr - 1;
 	extraMemoryAllocated -= *pSz;
-	printf("Extra memory deallocated, size: %ld\n", *pSz);
+	//printf("Extra memory deallocated, size: %ld\n", *pSz);
 	free((size_t*)ptr - 1);
 }
 
@@ -171,7 +171,7 @@ void bubbleSort(int* pData, int n)
     int i, j,temp;
     for (i = 0; i < n-1; i++)
     {
-        printf("Iteration# %d\n",i+1);
+        //printf("Iteration# %d\n",i+1);
         for (j = 0; j < n-i-1; j++)
         {
             if (pData[j] > pData[j+1])
@@ -194,7 +194,7 @@ void selectionSort(int* pData, int n)
     // One by one move boundary of unsorted subarray
     for (i = 0; i < n-1; i++)
     {
-        printf("\nIteration# %d\n",i+1);
+        //printf("\nIteration# %d\n",i+1);
         // Find the minimum element in unsorted array
         min_idx = i;
         for (j = i+1; j < n; j++)
